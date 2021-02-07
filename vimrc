@@ -1,6 +1,9 @@
 " Use , as the <Leader> key
 let mapleader = ","
 
+" Enable Lua syntax highlighting
+let g:vimsyn_embed = 'l'
+
 call plug#begin(stdpath('data') . '/plugged')
 
 " Universal set of defaults that (hopefully) everyone can agree on
@@ -218,18 +221,7 @@ set completeopt=menuone,noinsert,noselect
 " Avoid showing message extra message when using completion
 set shortmess+=c
 
-"
-" LSP setup
-"
+" Setup language servers
 lua << EOF
-local lspconfig = require'lspconfig'
-local completion = require'completion'
-
-lspconfig.pyls.setup{
-  settings = {
-    configurationSources = {"flake8"}
-  },
-  on_attach = completion.on_attach
-}
+require'lsp'
 EOF
-
