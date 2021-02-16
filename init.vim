@@ -68,6 +68,9 @@ Plug 'nvim-treesitter/playground'
 " Formatting code
 Plug 'sbdchd/neoformat'
 
+" Comply with PEP8
+Plug 'Vimjas/vim-python-pep8-indent'
+
 " Go language support
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
@@ -161,8 +164,8 @@ augroup highlight_yank
 augroup END
 
 " Fast editing and reloading of config
-nnoremap <Leader>ev :vsplit $MYVIMRC<CR>
-nnoremap <Leader>sv :source $MYVIMRC<CR>
+nnoremap <Leader>, :vsplit $MYVIMRC<CR>
+nnoremap <Leader>. :source $MYVIMRC<CR>
 
 " Another way to exit insert mode
 inoremap jk <Esc>
@@ -221,6 +224,15 @@ lua << EOF
 require'telescope'.load_extension'octo'
 EOF
 
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained",
+  highlight = {
+    enable = true
+  }
+}
+EOF
+
 " LSP
 lua << EOF
 local nvim_lsp = require'lspconfig'
@@ -261,9 +273,9 @@ local on_attach = function(client, bufnr)
   -- Set autocommands conditional on server_capabilities
   if client.resolved_capabilities.document_highlight then
     vim.api.nvim_exec([[
-      hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
-      hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
-      hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
+      hi LspReferenceRead cterm=bold ctermbg=red guifg=#f2e5bc guibg=#af3a03
+      hi LspReferenceText cterm=bold ctermbg=red guifg=#f2e5bc guibg=#af3a03
+      hi LspReferenceWrite cterm=bold ctermbg=red guifg=#f2e5bc guibg=#af3a03
       augroup lsp_document_highlight
         autocmd!
         autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
@@ -290,5 +302,5 @@ EOF
 " completion.nvim
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
