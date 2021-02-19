@@ -195,16 +195,21 @@ xnoremap > >gv
 " Pressing <Leader>ss will toggle and untoggle spell checking
 map <Leader>ss :setlocal spell!<CR>
 
-" lightline.vim
+
+" ############################################################################
+" # lightline.vim                                                            #
+" ############################################################################
+
 let g:lightline = {
   \ 'colorscheme': 'wombat',
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+  \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'lspstatus' ] ]
   \ },
   \ 'component_function': {
   \   'filename': 'LightlineFilename',
-  \   'gitbranch': 'FugitiveHead'
+  \   'gitbranch': 'FugitiveHead',
+  \   'lspstatus': 'LspStatus'
   \ }
   \ }
 
@@ -212,17 +217,35 @@ function! LightlineFilename()
     return expand('%')
 endfunction
 
-" telescope.nvim
+function! LspStatus() abort
+  if luaeval('#vim.lsp.buf_get_clients() > 0')
+    return trim(luaeval('require("lsp-status").status()'))
+  endif
+
+  return ''
+endfunction
+
+" ############################################################################
+" # telescope.nvim                                                           #
+" ############################################################################
+
 nnoremap <Leader>ff <Cmd>Telescope find_files<CR>
 nnoremap <Leader>fg <Cmd>Telescope live_grep<CR>
 nnoremap <Leader>fb <Cmd>Telescope buffers<CR>
 nnoremap <Leader>fh <Cmd>Telescope help_tags<CR>
 nnoremap <Leader>fl <Cmd>Telescope git_files<CR>
 
-" octo.nvim
+" ############################################################################
+" # octo.nvim                                                                #
+" ############################################################################
+
 lua << EOF
 require'telescope'.load_extension'octo'
 EOF
+
+" ############################################################################
+" # nvim-treesitter                                                          #
+" ############################################################################
 
 lua << EOF
 require'nvim-treesitter.configs'.setup {
@@ -233,12 +256,28 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 
-" LSP
-lua << EOF
-local nvim_lsp = require'lspconfig'
+" ############################################################################
+" # LSP                                                                      #
+" ############################################################################
 
+lua << EOF
+local lsp_status = require'lsp-status'
+lsp_status.register_progress()
+lsp_status.config({
+  indicator_errors = 'E',
+  indicator_warnings = 'W',
+  indicator_info = 'i',
+  indicator_hint = '?',
+  indicator_ok = 'Ok',
+  status_symbol = ''
+})
+
+local completion = require'completion'
+
+local lspconfig = require'lspconfig'
 local on_attach = function(client, bufnr)
-  require'completion'.on_attach(client, bufnr)
+  lsp_status.on_attach(client)  
+  completion.on_attach(client)
 
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -289,17 +328,22 @@ end
 -- and map buffer local keybindings when the language server attaches
 local servers = { "pyls", "tsserver", "graphql", "rust_analyzer", "gopls" }
 for _, lsp in ipairs(servers) do
-  local opts = { on_attach = on_attach }
+  local opts = { 
+    on_attach = on_attach, 
+    capabilities = lsp_status.capabilities 
+  }
   if lsp == "pyls" then
     opts["settings"] = {
       configurationSources = {"flake8"}
     }
   end
-  nvim_lsp[lsp].setup(opts)
+  lspconfig[lsp].setup(opts)
 end
 EOF
 
-" completion.nvim
+" ############################################################################
+" # completion.nvim                                                          #
+" ############################################################################
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"

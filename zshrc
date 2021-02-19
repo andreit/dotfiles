@@ -98,6 +98,8 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+export PATH=$HOME/.local/bin:$PATH
+
 if [ ! "$TMUX" = "" ]; then export TERM=xterm-256color; fi
 
 export NVM_DIR="$HOME/.nvm"
@@ -117,3 +119,13 @@ fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*" --glob "!*.py[cod]"'
+
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f /Users/andrei/Projects/backd-service/node_modules/tabtab/.completions/serverless.zsh ]] && . /Users/andrei/Projects/backd-service/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f /Users/andrei/Projects/backd-service/node_modules/tabtab/.completions/sls.zsh ]] && . /Users/andrei/Projects/backd-service/node_modules/tabtab/.completions/sls.zsh
+# tabtab source for slss package
+# uninstall by removing these lines or running `tabtab uninstall slss`
+[[ -f /Users/andrei/Projects/backd-service/node_modules/tabtab/.completions/slss.zsh ]] && . /Users/andrei/Projects/backd-service/node_modules/tabtab/.completions/slss.zsh
