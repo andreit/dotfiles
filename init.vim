@@ -40,6 +40,10 @@ Plug 'itchyny/lightline.vim'
 " disruptive "project drawer" style plugins
 Plug 'tpope/vim-vinegar'
 
+" Highlight for a unique character in every word on a line to help when using
+" f and F
+Plug 'unblevable/quick-scope'
+
 " Comment out and uncomment lines
 Plug 'tpope/vim-commentary'
 
@@ -102,6 +106,13 @@ runtime! plugin/sensible.vim
 if has('termguicolors')
   set termguicolors
 endif
+
+" Customize quick-scope colours
+augroup qs_colors
+  autocmd!
+  autocmd ColorScheme * highlight QuickScopePrimary guifg='#afff5f' gui=underline ctermfg=155 cterm=underline
+  autocmd ColorScheme * highlight QuickScopeSecondary guifg='#5fffff' gui=underline ctermfg=81 cterm=underline
+augroup END
 
 colorscheme gruvbox
 
@@ -224,6 +235,13 @@ function! LspStatus() abort
 
   return ''
 endfunction
+
+" ############################################################################
+" # quick-scope                                                              #
+" ############################################################################
+
+" Trigger a highlight in the appropriate direction when pressing these keys:
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
 " ############################################################################
 " # telescope.nvim                                                           #
