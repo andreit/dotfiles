@@ -154,6 +154,9 @@ set number
 " line
 set relativenumber
 
+" Minimal number of screen lines to keep above and below the cursor.
+set scrolloff=5
+
 " Number of spaces to use for each step of (auto)indent
 set shiftwidth=2
 
@@ -273,6 +276,15 @@ require'nvim-treesitter.configs'.setup {
   }
 }
 EOF
+
+" ############################################################################
+" # neoformat                                                                #
+" ############################################################################
+
+augroup fmt
+  autocmd!
+  autocmd BufWritePre * undojoin | Neoformat
+augroup END
 
 " ############################################################################
 " # LSP                                                                      #
