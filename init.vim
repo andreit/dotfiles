@@ -30,6 +30,9 @@ call plug#begin(stdpath('data') . '/plugged')
 " Universal set of defaults that (hopefully) everyone can agree on
 Plug 'tpope/vim-sensible'
 
+" Pairs of handy bracket mappings
+Plug 'tpope/vim-unimpaired'
+
 " Bright theme with pastel 'retro groove' colors and light/dark mode
 Plug 'morhetz/gruvbox'
 
@@ -107,8 +110,14 @@ if has('termguicolors')
   set termguicolors
 endif
 
+" Customize colorcolumn colour
+augroup colorcolumn_colors
+  autocmd!
+  autocmd ColorScheme * highlight ColorColumn ctermbg=0 guibg='#242424'
+augroup END
+
 " Customize quick-scope colours
-augroup qs_colors
+augroup quick_scope_colors
   autocmd!
   autocmd ColorScheme * highlight QuickScopePrimary guifg='#afff5f' gui=underline ctermfg=155 cterm=underline
   autocmd ColorScheme * highlight QuickScopeSecondary guifg='#5fffff' gui=underline ctermfg=81 cterm=underline
@@ -129,6 +138,9 @@ set cmdheight=2
 "   select one from the menu
 set completeopt=menuone,noinsert,noselect
 
+" Display a vertical ruler at column 80
+set colorcolumn=80
+
 " Highlight the screen line of the cursor
 set cursorline
 
@@ -140,9 +152,6 @@ set hidden
 
 " Show `▸▸` for tabs, `·` for tailing whitespace
 set list listchars=tab:▸▸,trail:·
-
-" Enable mouse mode
-set mouse=a
 
 " Hide the current mode
 set noshowmode
@@ -178,11 +187,33 @@ augroup highlight_yank
 augroup END
 
 " Fast editing and reloading of config
-nnoremap <Leader>, :vsplit $MYVIMRC<CR>
+nnoremap <Leader>, :split $MYVIMRC<CR>
 nnoremap <Leader>. :source $MYVIMRC<CR>
 
-" Another way to exit insert mode
+" Saving
+inoremap <C-s> <C-O>:update<CR>
+nnoremap <C-s> :update<CR>
+nnoremap <Leader>s :update<CR>
+nnoremap <Leader>w :update<CR>
+
+" Quitting
+inoremap <C-Q> <Esc>:q<CR>
+nnoremap <C-Q> :q<CR>
+vnoremap <C-Q> <Esc>
+nnoremap <Leader>q :q<CR>
+nnoremap <Leader>Q :qa!<CR>
+
+" jk | Escaping!
 inoremap jk <Esc>
+xnoremap jk <Esc>
+cnoremap jk <C-c>
+
+" Movement in insert mode
+inoremap <C-h> <C-o>h
+inoremap <C-l> <C-o>a
+inoremap <C-j> <C-o>j
+inoremap <C-k> <C-o>k
+inoremap <C-^> <C-o><C-^>
 
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
 map <Space> /
@@ -281,10 +312,13 @@ EOF
 " # neoformat                                                                #
 " ############################################################################
 
-augroup fmt
-  autocmd!
-  autocmd BufWritePre * undojoin | Neoformat
-augroup END
+" Run formatter on save
+" augroup fmt
+"   autocmd!
+"   autocmd BufWritePre * undojoin | Neoformat
+" augroup END
+
+nnoremap <Leader>cf <Cmd>Neoformat<CR>
 
 " ############################################################################
 " # LSP                                                                      #
@@ -362,11 +396,6 @@ for _, lsp in ipairs(servers) do
     on_attach = on_attach, 
     capabilities = lsp_status.capabilities 
   }
-  if lsp == "pyls" then
-    opts["settings"] = {
-      configurationSources = {"flake8"}
-    }
-  end
   lspconfig[lsp].setup(opts)
 end
 EOF
