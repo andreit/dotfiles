@@ -151,7 +151,7 @@ set expandtab
 set hidden
 
 " Show `▸▸` for tabs, `·` for tailing whitespace
-set list listchars=tab:▸▸,trail:·
+set list listchars=tab:▸▸,trail:·,eol:$
 
 " Hide the current mode
 set noshowmode
@@ -390,7 +390,7 @@ end
 
 -- Use a loop to conveniently both setup defined servers 
 -- and map buffer local keybindings when the language server attaches
-local servers = { "pyls", "tsserver", "graphql", "rust_analyzer", "gopls" }
+local servers = { "pyright", "tsserver", "graphql", "rust_analyzer", "gopls" }
 for _, lsp in ipairs(servers) do
   local opts = { 
     on_attach = on_attach, 
