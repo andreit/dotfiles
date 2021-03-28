@@ -36,9 +36,6 @@ Plug 'tpope/vim-unimpaired'
 " Bright theme with pastel 'retro groove' colors and light/dark mode
 Plug 'morhetz/gruvbox'
 
-" A light and configurable statusline/tabline
-Plug 'itchyny/lightline.vim'
-
 " Enhances netrw, partially in an attempt to mitigate the need for more 
 " disruptive "project drawer" style plugins
 Plug 'tpope/vim-vinegar'
@@ -113,7 +110,7 @@ endif
 " Customize colorcolumn colour
 augroup colorcolumn_colors
   autocmd!
-  autocmd ColorScheme * highlight ColorColumn ctermbg=0 guibg='#242424'
+  autocmd ColorScheme * highlight ColorColumn ctermbg=0 guibg='#32302f'
 augroup END
 
 " Customize quick-scope colours
@@ -153,9 +150,6 @@ set hidden
 " Show `▸▸` for tabs, `·` for tailing whitespace
 set list listchars=tab:▸▸,trail:·,eol:$
 
-" Hide the current mode
-set noshowmode
-
 " Print the line number in front of each line
 set number
 
@@ -174,6 +168,21 @@ set shortmess+=c
 
 " Always draw the signcolumn
 set signcolumn=yes
+
+set statusline=
+set statusline+=%#PmenuSel#
+set statusline+=\ %{FugitiveHead()}\ 
+set statusline+=%#LineNr#
+set statusline+=\ %f
+set statusline+=%m\ 
+set statusline+=%=
+set statusline+=%#CursorColumn#
+set statusline+=\%y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\ [%{&fileformat}\]
+set statusline+=\ %p%%
+set statusline+=\ %l:%c
+set statusline+=\ 
 
 " Number of spaces that a <Tab> in the file counts for
 set tabstop=2
@@ -239,36 +248,6 @@ xnoremap > >gv
 
 " Pressing <Leader>ss will toggle and untoggle spell checking
 map <Leader>ss :setlocal spell!<CR>
-
-
-" ############################################################################
-" # lightline.vim                                                            #
-" ############################################################################
-
-let g:lightline = {
-  \ 'colorscheme': 'wombat',
-  \ 'active': {
-  \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'lspstatus' ] ]
-  \ },
-  \ 'component_function': {
-  \   'filename': 'LightlineFilename',
-  \   'gitbranch': 'FugitiveHead',
-  \   'lspstatus': 'LspStatus'
-  \ }
-  \ }
-
-function! LightlineFilename()
-    return expand('%')
-endfunction
-
-function! LspStatus() abort
-  if luaeval('#vim.lsp.buf_get_clients() > 0')
-    return trim(luaeval('require("lsp-status").status()'))
-  endif
-
-  return ''
-endfunction
 
 " ############################################################################
 " # quick-scope                                                              #
