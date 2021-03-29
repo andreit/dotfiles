@@ -169,9 +169,17 @@ set shortmess+=c
 " Always draw the signcolumn
 set signcolumn=yes
 
+function! StatusLineGit()
+  let l:branch_name = FugitiveHead()
+  if (strlen(l:branch_name) > 0) 
+    return '  ' . l:branch_name . ' '
+  else
+    return ''
+endfunction
+
 set statusline=
 set statusline+=%#PmenuSel#
-set statusline+=\ %{FugitiveHead()}\ 
+set statusline+=%{StatusLineGit()}
 set statusline+=%#LineNr#
 set statusline+=\ %f
 set statusline+=%m\ 
@@ -214,7 +222,7 @@ nnoremap <Leader>Q :qa!<CR>
 
 " jk | Escaping!
 inoremap jk <Esc>
-xnoremap jk <Esc>
+" xnoremap jk <Esc>
 cnoremap jk <C-c>
 
 " Movement in insert mode
@@ -373,7 +381,7 @@ local servers = { "pyright", "tsserver", "graphql", "rust_analyzer", "gopls" }
 for _, lsp in ipairs(servers) do
   local opts = { 
     on_attach = on_attach, 
-    capabilities = lsp_status.capabilities 
+    capabilities = lsp_status.capabilities
   }
   lspconfig[lsp].setup(opts)
 end
