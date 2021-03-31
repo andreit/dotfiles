@@ -178,12 +178,20 @@ function! StatusLineGit()
     return ''
 endfunction
 
+function! LspStatus() abort
+  if luaeval('#vim.lsp.buf_get_clients() > 0')
+    return luaeval("require'lsp-status'.status()")
+  endif
+  return ''
+endfunction
+
 set statusline=
 set statusline+=%#PmenuSel#
 set statusline+=%{StatusLineGit()}
 set statusline+=%#LineNr#
 set statusline+=\ %f
 set statusline+=%m\ 
+set statusline+=%{LspStatus()}
 set statusline+=%=
 set statusline+=%#CursorColumn#
 set statusline+=\%y
@@ -314,7 +322,8 @@ nnoremap <Leader>cf <Cmd>Neoformat<CR>
 " ############################################################################
 
 lua << EOF
-require'lsp'
+local lsp = require'lsp'
+lsp.setup()
 EOF
 
 " ############################################################################
