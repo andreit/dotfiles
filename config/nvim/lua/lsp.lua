@@ -2,9 +2,6 @@ local lsp_status = require'lsp-status'
 local completion = require'completion'
 local lspconfig = require'lspconfig'
 
-local severity_indicators = { 'E', 'W', 'i', '?' }
-local servers = { "pyright", "tsserver", "graphql", "rust_analyzer", "gopls" }
-
 local function on_attach(client, bufnr)
   lsp_status.on_attach(client)  
   completion.on_attach(client)
@@ -62,6 +59,13 @@ end
 local function setup_servers()
   -- Use a loop to conveniently both setup defined servers 
   -- and map buffer local keybindings when the language server attaches
+  local servers = { 
+    "pyright", 
+    "tsserver", 
+    "graphql", 
+    "rust_analyzer", 
+    "gopls" 
+  }
   for _, lsp in ipairs(servers) do
     local opts = { 
       on_attach = on_attach, 
@@ -71,39 +75,24 @@ local function setup_servers()
   end
 end
 
-function handle_diagnostics_changed()
-  local items = {}
-  diagnostics = vim.lsp.diagnostic.get()
-  for _, diagnostic in ipairs(diagnostics) do
-    table.insert(items, {
-      filename = vim.fn.bufname(),
-      type = severity_indicators[diagnostic.severity],
-      lnum = diagnostic.range.start.line + 1,
-      col = diagnostic.range.start.character + 1,
-      text = diagnostic.message:gsub("\r", ""):gsub("\n", " ")
-    })
-  end
-  vim.lsp.util.set_loclist(items)
-  vim.api.nvim_command("doautocmd QuickFixCmdPost")
-end
-
 local function configure_lsp_status()
   lsp_status.register_progress()
   lsp_status.config({
-    indicator_errors = severity_indicators[1],
-    indicator_warnings = severity_indicators[2],
-    indicator_info = severity_indicators[3],
-    indicator_hint = severity_indicators[4],
+    indicator_errors = 'E',
+    indicator_warnings = 'W',
+    indicator_info = 'i',
+    indicator_hint = '?',
     indicator_ok = 'Ok',
-    status_symbol = ''
+    status_symbol = '->'
   })
 end
 
 local function setup()
   configure_lsp_status()
   setup_servers()
+
   vim.api.nvim_command [[
-    autocmd! User LspDiagnosticsChanged lua handle_diagnostics_changed()
+    autocmd! User LspDiagnosticsChanged lua vim.lsp.diagnostic.set_loclist({ open_loclist=false })
   ]]
 end
 
