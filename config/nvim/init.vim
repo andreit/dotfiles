@@ -170,7 +170,7 @@ set shortmess+=c
 " Always draw the signcolumn
 set signcolumn=yes
 
-function! StatusLineGit()
+function! GitBranch()
   let l:branch_name = FugitiveHead()
   if (strlen(l:branch_name) > 0) 
     return '  ' . l:branch_name . ' '
@@ -187,7 +187,7 @@ endfunction
 
 set statusline=
 set statusline+=%#PmenuSel#
-set statusline+=%{StatusLineGit()}
+set statusline+=%{GitBranch()}
 set statusline+=%#LineNr#
 set statusline+=\ %f
 set statusline+=%m\ 
@@ -265,6 +265,12 @@ xnoremap > >gv
 
 " Pressing <Leader>ss will toggle and untoggle spell checking
 map <Leader>ss :setlocal spell!<CR>
+
+" Qucikfix lists
+nnoremap <Leader>lo :lopen<CR>
+nnoremap <Leader>lc :lclose<CR>
+nnoremap <Leader>co :copen<CR>
+nnoremap <Leader>cc :cclose<CR>
 
 " ############################################################################
 " # quick-scope                                                              #

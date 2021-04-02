@@ -32,7 +32,7 @@ local function on_attach(client, bufnr)
   buf_set_keymap('n', '<Leader>e', '<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', '[d', '<Cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<Cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<Leader>q', '<Cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<Leader>l', '<Cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
   -- Set some keybinds conditional on server capabilities
   if client.resolved_capabilities.document_formatting then
@@ -90,10 +90,6 @@ end
 local function setup()
   configure_lsp_status()
   setup_servers()
-
-  vim.api.nvim_command [[
-    autocmd! User LspDiagnosticsChanged lua vim.lsp.diagnostic.set_loclist({ open_loclist=false })
-  ]]
 end
 
 local M = {
