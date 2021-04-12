@@ -54,6 +54,9 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 
+" Kick off builds and test suites using one of several asynchronous adpters
+Plug 'tpope/vim-dispatch'
+
 " Shows a git diff in the sign column
 Plug 'airblade/vim-gitgutter'
 
@@ -213,7 +216,7 @@ augroup highlight_yank
 augroup END
 
 " Fast editing and reloading of config
-nnoremap <Leader>, :split $MYVIMRC<CR>
+nnoremap <Leader>, :e $MYVIMRC<CR>
 nnoremap <Leader>. :source $MYVIMRC<CR>
 
 " Saving
@@ -272,6 +275,15 @@ nnoremap <Leader>lc :lclose<CR>
 nnoremap <Leader>co :copen<CR>
 nnoremap <Leader>cc :cclose<CR>
 
+" Quickly open the embedded Nvim terminal emulator
+nnoremap <silent> <Leader>t :bel 10sp +terminal<CR>
+"
+" Enter terminal mode automatically
+augroup term_open
+  autocmd!
+  autocmd TermOpen * startinsert
+augroup END
+
 " ############################################################################
 " # quick-scope                                                              #
 " ############################################################################
@@ -288,6 +300,29 @@ nnoremap <Leader>fg <Cmd>Telescope live_grep<CR>
 nnoremap <Leader>fb <Cmd>Telescope buffers<CR>
 nnoremap <Leader>fh <Cmd>Telescope help_tags<CR>
 nnoremap <Leader>fl <Cmd>Telescope git_files<CR>
+nnoremap <Leader>fs <Cmd>Telescope lsp_document_symbols<CR>
+nnoremap <Leader>fw <Cmd>Telescope lsp_workspace_symbols<CR>
+
+" ############################################################################
+" # vim-dispatch                                                             #
+" ############################################################################
+
+" Makefile
+nnoremap <Leader>mi :Make install<CR>
+nnoremap <Leader>mt :Make test<CR>
+nnoremap <Leader>ml :Make lint<CR>
+nnoremap <Leader>mf :Make format<CR>
+nnoremap <Leader>mr :Make run<CR>
+
+" Yarn
+nnoremap <Leader>yi :Dispatch yarn install<CR>
+nnoremap <Leader>yt :Dispatch yarn test<CR>
+nnoremap <Leader>ys :Dispatch! yarn start<CR>
+
+" npm
+nnoremap <Leader>ni :Dispatch npm install<CR>
+nnoremap <Leader>nt :Dispatch npm test<CR>
+nnoremap <Leader>ns :Dispatch npm start<CR>
 
 " ############################################################################
 " # octo.nvim                                                                #
@@ -321,7 +356,7 @@ EOF
 "   autocmd BufWritePre * undojoin | Neoformat
 " augroup END
 
-nnoremap <Leader>cf <Cmd>Neoformat<CR>
+nnoremap <Leader>gf <Cmd>Neoformat<CR>
 
 " ############################################################################
 " # LSP                                                                      #
