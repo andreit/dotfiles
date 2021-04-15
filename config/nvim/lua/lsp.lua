@@ -83,7 +83,7 @@ local function configure_lsp_status()
     indicator_info = 'i',
     indicator_hint = '?',
     indicator_ok = 'Ok',
-    status_symbol = '->'
+    status_symbol = ''
   })
 end
 
