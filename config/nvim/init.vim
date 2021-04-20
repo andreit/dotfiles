@@ -264,10 +264,11 @@ augroup END
 " ############################################################################
 
 let g:lightline = {
-  \ 'colorscheme': 'wombat',
+  \ 'colorscheme': 'jellybeans',
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'lspstatus' ] ]
+  \             [ 'gitbranch', 'readonly', 'filename', 'modified' ], 
+  \             [ 'lspstatus' ] ]
   \ },
   \ 'component_function': {
   \   'gitbranch': 'FugitiveHead',
