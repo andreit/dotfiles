@@ -63,10 +63,7 @@ Plug 'tpope/vim-dispatch'
 " Shows a git diff in the sign column
 Plug 'airblade/vim-gitgutter'
 
-" Work with GitHub issues and PRs
-Plug 'pwntester/octo.nvim'
-
-" Highly extendable fuzzy finder.
+" Highly extendable fuzzy finder
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -76,11 +73,14 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
 
-" Formatting code
-Plug 'sbdchd/neoformat'
-
 " Comply with PEP8
 Plug 'Vimjas/vim-python-pep8-indent'
+
+" Wrapper for prettier, pre-configured with custom default prettier settings
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+
+" Preview markdown on your modern browser with synchronised scrolling and flexible configuration
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 " Go language support
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
@@ -91,13 +91,14 @@ Plug 'rust-lang/rust.vim'
 " Common configurations for Neovim's built-in language server client
 Plug 'neovim/nvim-lspconfig'
 
-" Auto completion framework that aims to provide a better completion 
-" experience with neovim's built-in LSP
-Plug 'nvim-lua/completion-nvim'
+" Auto completion
+Plug 'hrsh7th/nvim-compe'
 
-" Neovim plugin/library for generating statusline components from the built-in 
-" LSP client
-Plug 'nvim-lua/lsp-status.nvim'
+" Snippets
+Plug 'L3MON4D3/LuaSnip'
+
+" Interactive scratchpad for lua
+Plug 'rafcamlet/nvim-luapad'
 
 call plug#end()
 
@@ -222,6 +223,7 @@ inoremap <C-^> <C-o><C-^>
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
 map <Space> /
 map <C-Space> ?
+nnoremap <silent> <Leader><Space> :nohlsearch<CR>
 
 " Use arrow keys to move between windows
 map <Down> <C-w>j
@@ -267,27 +269,12 @@ let g:lightline = {
   \ 'colorscheme': 'jellybeans',
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'gitbranch', 'readonly', 'filename', 'modified' ], 
-  \             [ 'lspstatus' ] ]
+  \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
   \ },
   \ 'component_function': {
   \   'gitbranch': 'FugitiveHead',
-  \   'filename': 'LightlineFilename',
-  \   'lspstatus': 'LightlineLspStatus'
   \ },
   \ }
-
-function! LightlineFilename()
-    return expand('%')
-endfunction
-
-function! LightlineLspStatus() abort
-  let l:status = ""
-  if luaeval('#vim.lsp.buf_get_clients() > 0')
-    let l:status = luaeval("require'lsp-status'.status()")
-  endif
-  return trim(l:status)
-endfunction
 
 " ############################################################################
 " # quick-scope                                                              #
@@ -330,15 +317,6 @@ nnoremap <Leader>nt :Dispatch npm test<CR>
 nnoremap <Leader>ns :Dispatch npm start<CR>
 
 " ############################################################################
-" # octo.nvim                                                                #
-" ############################################################################
-
-lua << EOF
-local telescope = require'telescope'
-telescope.load_extension'octo'
-EOF
-
-" ############################################################################
 " # nvim-treesitter                                                          #
 " ############################################################################
 
@@ -350,18 +328,6 @@ require'nvim-treesitter.configs'.setup {
   }
 }
 EOF
-
-" ############################################################################
-" # neoformat                                                                #
-" ############################################################################
-
-" Run formatter on save
-" augroup fmt
-"   autocmd!
-"   autocmd BufWritePre * undojoin | Neoformat
-" augroup END
-
-nnoremap <Leader>gf <Cmd>Neoformat<CR>
 
 " ############################################################################
 " # LSP                                                                      #
@@ -379,3 +345,22 @@ EOF
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" ############################################################################
+" # eslint_d                                                                 #
+" ############################################################################
+
+" Autofix entire buffer
+nnoremap <Leader>be mF:%!eslint_d --stdin --fix-to-stdout<CR>`F
+
+" Autofix visual selection
+vnoremap <Leader>be :!eslint_d --stdin --fix-to-stdout<CR>gv
+
+" ############################################################################
+" # vim-prettier                                                             #
+" ############################################################################
+
+nmap <Leader>bp <Plug>(Prettier)<Cmd>e<CR>
+ 
+let g:prettier#autoformat = 0
+let g:prettier#exec_cmd_async = 1
