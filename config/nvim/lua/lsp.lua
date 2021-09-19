@@ -68,6 +68,7 @@ local function lsp_setup()
   local servers = { 
     "pyright", 
     "tsserver", 
+    "omnisharp",
     "graphql", 
     "rust_analyzer", 
     "gopls",
@@ -84,7 +85,11 @@ local function lsp_setup()
       capabilities = capabilities,
     }
 
-    if lsp == "sumneko_lua" then
+    if lsp == "omnisharp" then
+      local pid = vim.fn.getpid()
+      local omnisharp_bin = vim.fn.stdpath('cache')..'/omnisharp-osx/run'
+      opts.cmd = { omnisharp_bin, "--languageserver" , "--hostPID", tostring(pid) };
+    elseif lsp == "sumneko_lua" then
       local system_name
       if vim.fn.has("mac") == 1 then
         system_name = "macOS"

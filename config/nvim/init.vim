@@ -360,7 +360,7 @@ vnoremap <Leader>be :!eslint_d --stdin --fix-to-stdout<CR>gv
 " # vim-prettier                                                             #
 " ############################################################################
 
-nmap <Leader>bp <Plug>(Prettier)<Cmd>e<CR>
+nmap <Leader>bp <Plug>(Prettier) <bar> <Cmd>e<CR>
  
 let g:prettier#autoformat = 0
 let g:prettier#exec_cmd_async = 1
