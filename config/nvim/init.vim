@@ -103,6 +103,9 @@ Plug 'L3MON4D3/LuaSnip'
 " Interactive scratchpad for lua
 Plug 'rafcamlet/nvim-luapad'
 
+" The interactive scratchpad for hackers
+Plug 'metakirby5/codi.vim'
+
 call plug#end()
 
 " Automatically install missing plugins on startup
