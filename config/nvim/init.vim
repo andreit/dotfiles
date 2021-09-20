@@ -36,8 +36,11 @@ Plug 'tpope/vim-unimpaired'
 " Bright theme with pastel 'retro groove' colors and light/dark mode
 Plug 'morhetz/gruvbox'
 
-" A light and configurable statusline
-Plug 'itchyny/lightline.vim'
+" Add icons to plugins
+Plug 'ryanoasis/vim-devicons'
+
+" A blazing fast and easy to configure neovim statusline written in pure lua
+Plug 'hoob3rt/lualine.nvim'
 
 " Enhances netrw, partially in an attempt to mitigate the need for more 
 " disruptive "project drawer" style plugins
@@ -152,6 +155,9 @@ set cursorline
 " In Insert mode, use the appropriate number of spaces to insert a <Tab>
 set expandtab
 
+" Configure the cursor style for each mode
+set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175
+
 " Hide buffer when abandoned
 set hidden
 
@@ -262,19 +268,17 @@ augroup term_open
 augroup END
 
 " ############################################################################
-" # lightline.vim                                                            #
+" # lualine.nvim                                                             #
 " ############################################################################
-
-let g:lightline = {
-  \ 'colorscheme': 'jellybeans',
-  \ 'active': {
-  \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-  \ },
-  \ 'component_function': {
-  \   'gitbranch': 'FugitiveHead',
-  \ },
-  \ }
+lua << EOF
+require('lualine').setup{
+  options = { 
+    icons_enabled = false,
+    section_separators = '', 
+    component_separators = '' 
+  }
+}
+EOF
 
 " ############################################################################
 " # quick-scope                                                              #
