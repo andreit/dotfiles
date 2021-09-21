@@ -278,7 +278,17 @@ require('lualine').setup{
   options = { 
     icons_enabled = false,
     section_separators = '', 
-    component_separators = '' 
+    component_separators = {'|', '|'} 
+  },
+  sections = {
+    lualine_c = {
+      'filename',
+      {
+        'diagnostics',
+        sources = {'nvim_lsp'},
+        symbols = {error = 'E:', warn = 'W:', info = '?:'},
+      }
+    }
   }
 }
 EOF
@@ -367,7 +377,7 @@ vnoremap <Leader>be :!eslint_d --stdin --fix-to-stdout<CR>gv
 " # vim-prettier                                                             #
 " ############################################################################
 
-nmap <Leader>bp <Plug>(Prettier) <bar> <Cmd>e<CR>
+nmap <Leader>bp <Plug>(Prettier)
  
 let g:prettier#autoformat = 0
 let g:prettier#exec_cmd_async = 1
