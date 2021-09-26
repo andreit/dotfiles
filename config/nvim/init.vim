@@ -67,9 +67,9 @@ Plug 'tpope/vim-dispatch'
 Plug 'airblade/vim-gitgutter'
 
 " Highly extendable fuzzy finder
-Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
 " Simple and easy way to use the interface for tree-sitter in Neovim and to 
 " provide some basic functionality such as highlighting
@@ -303,6 +303,24 @@ let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 " ############################################################################
 " # telescope.nvim                                                           #
 " ############################################################################
+
+lua << EOF
+local telescope = require('telescope')
+telescope.setup{
+  defaults = {
+    layout_strategy = 'vertical',
+    layout_config = {
+      vertical = {
+        height = 0.9,
+        mirror = true,
+        width = 0.8,
+        preview_cutoff = 20,
+      }
+    }
+  }
+}
+telescope.load_extension('fzf')
+EOF
 
 nnoremap <Leader>ff <Cmd>Telescope find_files<CR>
 nnoremap <Leader>fg <Cmd>Telescope live_grep<CR>
