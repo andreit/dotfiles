@@ -76,12 +76,6 @@ Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
 
-" Comply with PEP8
-Plug 'Vimjas/vim-python-pep8-indent'
-
-" Wrapper for prettier, pre-configured with custom default prettier settings
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-
 " Preview markdown on your modern browser with synchronised scrolling and flexible configuration
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
@@ -91,8 +85,14 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " Provides Rust file detection, syntax highlighting and formatting
 Plug 'rust-lang/rust.vim'
 
+" Build flutter and dart applications in neovim using the native LSP
+Plug 'akinsho/flutter-tools.nvim'
+
 " Common configurations for Neovim's built-in language server client
 Plug 'neovim/nvim-lspconfig'
+
+" A light-weight lsp plugin based on neovim built-in lsp with highly a performant UI
+Plug 'glepnir/lspsaga.nvim'
 
 " Auto completion
 Plug 'hrsh7th/nvim-compe'
@@ -255,12 +255,6 @@ xnoremap > >gv
 " Pressing <Leader>ss will toggle and untoggle spell checking
 map <Leader>ss :setlocal spell!<CR>
 
-" Qucikfix lists
-nnoremap <Leader>lo :lopen<CR>
-nnoremap <Leader>lc :lclose<CR>
-nnoremap <Leader>co :copen<CR>
-nnoremap <Leader>cc :cclose<CR>
-
 " Quickly open the embedded Nvim terminal emulator
 nnoremap <silent> <Leader>t :bel 10sp +terminal<CR>
 "
@@ -270,45 +264,44 @@ augroup term_open
   autocmd TermOpen * startinsert
 augroup END
 
-" ############################################################################
-" # lualine.nvim                                                             #
-" ############################################################################
+" Trigger a highlight in the appropriate direction when pressing these keys:
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+
+" Find things with Telescope
+nnoremap <Leader>ff <Cmd>Telescope find_files<CR>
+nnoremap <Leader>fg <Cmd>Telescope live_grep<CR>
+nnoremap <Leader>fb <Cmd>Telescope buffers<CR>
+nnoremap <Leader>fh <Cmd>Telescope help_tags<CR>
+nnoremap <Leader>fl <Cmd>Telescope git_files<CR>
+nnoremap <Leader>fs <Cmd>Telescope lsp_document_symbols<CR>
+nnoremap <Leader>fw <Cmd>Telescope lsp_workspace_symbols<CR>
+
 lua << EOF
-require('lualine').setup{
+-- Setup lualine
+local lualine = require "lualine"
+lualine.setup{
   options = { 
     icons_enabled = false,
-    section_separators = '', 
-    component_separators = {'|', '|'} 
+    section_separators = "", 
+    component_separators = {"|", "|"} 
   },
   sections = {
     lualine_c = {
-      'filename',
+      "filename",
       {
-        'diagnostics',
-        sources = {'nvim_lsp'},
-        symbols = {error = 'E:', warn = 'W:', info = '?:'},
+        "diagnostics",
+        sources = {"nvim_lsp"},
+        symbols = {error = "E:", warn = "W:", info = "?:"},
       }
     }
   }
 }
-EOF
 
-" ############################################################################
-" # quick-scope                                                              #
-" ############################################################################
-
-" Trigger a highlight in the appropriate direction when pressing these keys:
-let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
-
-" ############################################################################
-" # telescope.nvim                                                           #
-" ############################################################################
-
-lua << EOF
-local telescope = require('telescope')
+-- Setup telescope
+local telescope = require "telescope"
 telescope.setup{
   defaults = {
-    layout_strategy = 'vertical',
+    layout_strategy = "vertical",
     layout_config = {
       vertical = {
         height = 0.9,
@@ -319,83 +312,18 @@ telescope.setup{
     }
   }
 }
-telescope.load_extension('fzf')
-EOF
+telescope.load_extension("fzf")
 
-nnoremap <Leader>ff <Cmd>Telescope find_files<CR>
-nnoremap <Leader>fg <Cmd>Telescope live_grep<CR>
-nnoremap <Leader>fb <Cmd>Telescope buffers<CR>
-nnoremap <Leader>fh <Cmd>Telescope help_tags<CR>
-nnoremap <Leader>fl <Cmd>Telescope git_files<CR>
-nnoremap <Leader>fs <Cmd>Telescope lsp_document_symbols<CR>
-nnoremap <Leader>fw <Cmd>Telescope lsp_workspace_symbols<CR>
-
-" ############################################################################
-" # vim-dispatch                                                             #
-" ############################################################################
-
-" Makefile
-nnoremap <Leader>mi :Make install<CR>
-nnoremap <Leader>mt :Make test<CR>
-nnoremap <Leader>ml :Make lint<CR>
-nnoremap <Leader>mf :Make format<CR>
-nnoremap <Leader>mr :Make run<CR>
-
-" Yarn
-nnoremap <Leader>yi :Dispatch yarn install<CR>
-nnoremap <Leader>yt :Dispatch yarn test<CR>
-nnoremap <Leader>ys :Dispatch! yarn start<CR>
-
-" npm
-nnoremap <Leader>ni :Dispatch npm install<CR>
-nnoremap <Leader>nt :Dispatch npm test<CR>
-nnoremap <Leader>ns :Dispatch npm start<CR>
-
-" ############################################################################
-" # nvim-treesitter                                                          #
-" ############################################################################
-
-lua << EOF
-require'nvim-treesitter.configs'.setup {
+-- Setup nvim-treesitter
+local nvim_treesitter_configs = require "nvim-treesitter.configs"
+nvim_treesitter_configs.setup {
   ensure_installed = "maintained",
   highlight = {
     enable = true
   }
 }
-EOF
 
-" ############################################################################
-" # LSP                                                                      #
-" ############################################################################
-
-lua << EOF
-local lsp = require'lsp'
+-- Setup built-in lsp client
+local lsp = require "lsp"
 lsp.setup()
 EOF
-
-" ############################################################################
-" # completion.nvim                                                          #
-" ############################################################################
-
-" Use <Tab> and <S-Tab> to navigate through popup menu
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-" ############################################################################
-" # eslint_d                                                                 #
-" ############################################################################
-
-" Autofix entire buffer
-nnoremap <Leader>be mF:%!eslint_d --stdin --fix-to-stdout<CR>`F
-
-" Autofix visual selection
-vnoremap <Leader>be :!eslint_d --stdin --fix-to-stdout<CR>gv
-
-" ############################################################################
-" # vim-prettier                                                             #
-" ############################################################################
-
-nmap <Leader>bp <Plug>(Prettier)
- 
-let g:prettier#autoformat = 0
-let g:prettier#exec_cmd_async = 1
