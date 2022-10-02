@@ -40,7 +40,7 @@ local function on_attach(client, bufnr)
   buf_set_keymap("n", "<Leader>l", "<Cmd>lua vim.lsp.diagnostic.set_loclist()<CR>", opts) -- <Leader>q is used to quit
 
   -- Set some keymaps conditional on server capabilities
-  if client.resolved_capabilities.document_formatting then
+  if client.server_capabilities.document_formatting then
     buf_set_keymap("n", "<Leader>f", "<Cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   end
 end
